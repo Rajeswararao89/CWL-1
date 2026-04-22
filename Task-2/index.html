@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DevOps Deployment — Live</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --border: #1f2d45;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --green: #10b981;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridPan 20s linear infinite;
+    }
+
+    @keyframes gridPan {
+      0%   { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+
+    /* Glowing orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; animation-delay: 0s; }
+    .orb-2 { width: 300px; height: 300px; background: var(--accent2); bottom: -80px; right: -80px; animation-delay: 3s; }
+    .orb-3 { width: 200px; height: 200px; background: var(--green); bottom: 20%; left: 10%; animation-delay: 5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50%       { transform: translateY(-20px) scale(1.05); }
+    }
+
+    /* Main card */
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(17,24,39,0.85);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 56px;
+      max-width: 680px;
+      width: 90%;
+      backdrop-filter: blur(20px);
+      box-shadow:
+        0 0 0 1px rgba(0,212,255,0.05),
+        0 25px 50px rgba(0,0,0,0.5),
+        0 0 80px rgba(0,212,255,0.05);
+      animation: cardIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    /* Terminal header bar */
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--green);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+      animation: cardIn 0.8s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: cardIn 0.8s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 36px;
+      animation: cardIn 0.8s 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    /* Info grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 36px;
+      animation: cardIn 0.8s 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .info-item {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .info-label {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .info-value {
+      font-size: 14px;
+      color: var(--accent);
+    }
+
+    /* Command block */
+    .cmd-block {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      animation: cardIn 0.8s 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .cmd-block .prompt { color: var(--green); }
+    .cmd-block .cmd    { color: #e2e8f0; }
+    .cmd-block .arg    { color: var(--accent); }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      animation: cardIn 0.8s 0.7s cubic-bezier(0.22,1,0.36,1) both;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="card">
+    <div class="terminal-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="terminal-title">bash — docker container</span>
+    </div>
+
+    <div class="status-badge">
+      <span class="pulse"></span>
+      CONTAINER RUNNING
+    </div>
+
+    <h1>Application Deployed<br/>via Docker</h1>
+    <p class="subtitle">This page is being served from inside a Docker container. The application was containerized, built as an image, and exposed on port 8000 — demonstrating end-to-end container deployment.</p>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Port</div>
+        <div class="info-value">:8000</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Status</div>
+        <div class="info-value">Active</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Server</div>
+        <div class="info-value">nginx:alpine</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Task</div>
+        <div class="info-value">DevOps Intern #2</div>
+      </div>
+    </div>
+
+    <div class="cmd-block">
+      <span class="prompt">$ </span>
+      <span class="cmd">docker run </span>
+      <span class="arg">-d -p 8000:80</span>
+      <span class="cmd"> devops-app</span>
+    </div>
+
+    <div class="footer-note">
+      Deployment Status: Active &amp; Running &nbsp;·&nbsp; CWL DevOps Internship Assignment
+    </div>
+  </div>
+</body>
+</html>
