@@ -25,31 +25,31 @@ All 5 tasks implemented and verified on a local Vagrant-managed Ubuntu VM (Virtu
 
 ```
 Project-Submission/
-├── Vagrantfile                    # VM config — 2 CPUs, 2GB RAM, port 8000 forwarded
 ├── Task-1/
 │   ├── README.md
+│   └── screenshot-ssh-login.png
 │   ├── sshd_config                # Hardened SSH daemon config
 │   ├── ssh_config                 # SSH client shortcut
-│   └── screenshot-ssh-login.png
 ├── Task-2/
-│   ├── README.md
 │   ├── Dockerfile
+│   ├── README.md
 │   ├── index.html
 │   ├── screenshot-docker-ps.png
 │   └── screenshot-browser.png
 ├── Task-3/
 │   ├── README.md
-│   ├── monitor.sh
 │   └── screenshot-monitor-logs.png
+│   ├── monitor.sh
 ├── Task-4/
 │   ├── README.md
-│   ├── setup_monitor_user.sh
 │   └── screenshot-access-control.png
+│   ├── setup_monitor_user.sh
 ├── Task-5/
 │   ├── README.md
 │   ├── firewall_setup.sh
 │   └── screenshot-ufw-status.png
 └── README.md
+├── Vagrantfile                    # VM config — 2 CPUs, 2GB RAM, port 8000 forwarded
 ```
 
 ---
