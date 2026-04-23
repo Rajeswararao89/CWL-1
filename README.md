@@ -107,8 +107,7 @@ cd Task-5/ && sudo bash firewall_setup.sh
 
 ## Walkthrough video
 
-> **[Link to Video Walkthrough]** — *(Upload to Google Drive and paste link here)*
-
+> **[Video Walkthrough](https://drive.google.com/file/d/1sM9OiI2ULYVcoZ9TCo0BDujQjL7ZesqK/view?usp=sharing)**
 Covers: SSH passwordless auth → Docker deployment → monitoring logs → access control verification → firewall rules.
 
 ---
