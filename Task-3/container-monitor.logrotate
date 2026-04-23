@@ -1,0 +1,26 @@
+# logrotate config for container-monitor logs
+# place this file at: /etc/logrotate.d/container-monitor
+#
+# to install:
+#   sudo cp container-monitor.logrotate /etc/logrotate.d/container-monitor
+#
+# to test without actually rotating:
+#   sudo logrotate --dry-run /etc/logrotate.d/container-monitor
+
+/opt/container-monitor/logs/*.log {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    create 0640 monitor monitor
+}
+
+/opt/container-monitor/logs/*.csv {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    create 0640 monitor monitor
+}
