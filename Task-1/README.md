@@ -13,8 +13,8 @@ Provisioned an Ubuntu 22.04 VM using Vagrant on VirtualBox (Windows 11 host), co
 | VM Manager | Vagrant |
 | VM OS | Ubuntu 22.04 LTS (ubuntu/jammy64) |
 | VM Hostname | ubuntu-jammy |
-| SSH Host | 127.0.0.1 via NAT forwarding |
-| SSH Port | 2222 |
+| SSH Host | 127.0.0.1 via NAT forwarding (see note below) |
+| SSH Port | 2222 (Vagrant forwarded port) |
 | SSH User | vagrant |
 | Shell (Host) | Git Bash (MINGW64) |
 
@@ -102,6 +102,8 @@ cat ~/.ssh/authorized_keys
 
 Used `echo >` instead of nano — first attempt with nano got the key truncated.
 
+**Note on Vagrant's default key:** Vagrant automatically inserts its own insecure key into `authorized_keys` when the VM first boots. That key is still present alongside the Ed25519 key added above. The passwordless login in this task uses the `devops_vm` Ed25519 key specifically — confirmed by the explicit `-i ~/.ssh/devops_vm` flag in the ssh command. In a production setup you'd remove Vagrant's insecure key from `authorized_keys` entirely.
+
 ---
 
 ### 5. Fix permissions
@@ -181,6 +183,18 @@ Now just `ssh devops-vm` works.
 
 ---
 
+## Note on 127.0.0.1 vs a real server IP
+
+The assignment mentions accessing the server via its IP address. In this Vagrant NAT setup, the VM isn’t directly reachable by a LAN IP — instead Vagrant forwards port 2222 on the host’s `127.0.0.1` through to the VM’s port 22. It works the same way as a real SSH connection, just tunnelled through localhost.
+
+In a bridged network or a cloud VM, you’d replace `127.0.0.1:2222` with the VM’s actual IP on port 22:
+```bash
+ssh -i ~/.ssh/devops_vm ubuntu@192.168.1.x   # bridged example
+ssh -i ~/.ssh/devops_vm ubuntu@10.0.0.x      # cloud VM example
+```
+
+---
+
 ## Screenshot
 
 ![SSH login and sshd verification](screenshot-ssh-login.png)
@@ -194,6 +208,7 @@ Now just `ssh devops-vm` works.
 - Port 2222 occasionally changes after `vagrant halt` + `vagrant up` — if connection fails, run `vagrant ssh-config` to check the current port and update `~/.ssh/config`
 - Used `echo "key" > authorized_keys` instead of nano after the first attempt truncated the key
 - Always verify with `sshd -T` after editing sshd_config — the file change alone doesn't confirm the daemon reloaded correctly
+- Vagrant’s insecure default key stays in `authorized_keys` alongside yours — both work, but the `-i ~/.ssh/devops_vm` flag in the ssh command confirms it’s your key doing the authentication
 
 ---
 
