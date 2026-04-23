@@ -10,6 +10,11 @@
 # find your trusted IP with: ip route | grep default
 # in a Vagrant NAT setup it's usually 10.0.2.2
 
+if [ "$(id -u)" -ne 0 ]; then
+    echo "needs to run as root: sudo bash firewall_setup.sh"
+    exit 1
+fi
+
 TRUSTED_SSH_IP="10.0.2.2"
 
 echo "configuring UFW..."
